@@ -1,0 +1,39 @@
+require('dotenv').config();
+const ExtendedClient = require('./classes/ExtendedClient');
+const client = new ExtendedClient();
+const salonDeLogsID = '1147095914125742120'; // Remplacez par l'ID du salon de logs
+const salonDeLogs = client.channels.cache.get(salonDeLogsID);
+
+// Log lorsqu'un message est supprimé
+client.on('messageDelete', (message) => {
+    if (salonDeLogs) {
+        salonDeLogs.send(`Message supprimé par ${message.author.tag}: "${message.content}"`);
+    }
+});
+
+// Log lorsqu'un message est édité
+client.on('messageUpdate', (oldMessage, newMessage) => {
+    if (salonDeLogs) {
+        salonDeLogs.send(`Message édité par ${oldMessage.author.tag}: "${oldMessage.content}" => "${newMessage.content}"`);
+    }
+});
+
+// Log lorsqu'un membre rejoint le serveur
+client.on('guildMemberAdd', (member) => {
+    if (salonDeLogs) {
+        salonDeLogs.send(`${member.user.tag} a rejoint le serveur.`);
+    }
+});
+
+// Log lorsqu'un membre quitte le serveur
+client.on('guildMemberRemove', (member) => {
+    if (salonDeLogs) {
+        salonDeLogs.send(`${member.user.tag} a quitté le serveur.`);
+    }
+});
+
+
+client.start();
+
+process.on('unhandledRejection', console.error);
+process.on('uncaughtException', console.error);
